@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información de Países</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Información de Países</h1>
+    <label for="pais">Selecciona un país:</label>
+    <select id="pais">
+        <option value="afghanistan">Afganistán</option>
+        <option value="argentina">Argentina</option>
+        <option value="canada">Canadá</option>
+        <option value="uruguay">Uruguay</option>
+        <option value="brasil">Brasil</option>
+        <option value="china">China</option>
+        <!-- Se agregan las opciones de paises que quieramos solicitar en la página -->
+
+    </select>
+    <button onclick="consultarPais()">Consultar</button>
+    <div id="infoPais"></div>
+
+    <script>
+        let paisSelect = document.getElementById("pais");
+        let infoPaisDiv = document.getElementById("infoPais");
+
+        async function consultarPais() {
+            let pais = paisSelect.value;
+            let apiUrl = `https://restcountries.com/v2/name/${pais}`;
+
+            try {
+                let response = await fetch(apiUrl);
+                if (response.ok) {
+                    let data = await response.json();
+                    mostrarInfoPais(data);
+                } else {
+                    mostrarError("No se pudo obtener la información del país.");
+                }
+            } catch (error) {
+                mostrarError("Ha ocurrido un error al consultar la información del país.");
+            }
+        }
+
+        function mostrarInfoPais(data) {
+            const [paisData] = data; // Tomar el primer resultado
+            infoPaisDiv.innerHTML = `
+                <h2>Información de ${paisData.name}</h2>
+                <p>Capital: ${paisData.capital}</p>
+                <p>Población: ${paisData.population}</p>
+                <p>Idioma: ${paisData.languages[0].name}</p>
+                <p>Moneda: ${paisData.currencies[0].name} (${paisData.currencies[0].symbol})</p>
+                <!-- Agrega más datos según tus necesidades -->
+            `;
+        }
+
+        function mostrarError(mensaje) {
+            infoPaisDiv.innerHTML = `<p class="error">${mensaje}</p>`;
+        }
+    </script>
+</body>
+</html>
